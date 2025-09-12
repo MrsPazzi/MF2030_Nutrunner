@@ -32,7 +32,7 @@ opt.Amplitude = 36;
 
 % Step responses
 [y,t] = step(ss3,opt);
-no_load_speed = dcg * U_N
+no_load_speed = dcg * U_N % Calculated no-load speed Task2
 
 tau = 0; 
 index = 1;
@@ -43,7 +43,8 @@ while y(index) <= (0.632 * no_load_speed)
 
 end
 
-tau
+tau % Calculated tau Task2
+
 %step(ss3, opt)                 % speed response to 36 V step
 %grid on
 %figure, bode(ss3), grid on  % frequency response
@@ -101,16 +102,16 @@ B = [(1/L), 0; 0, (-1/J)]; % Input to state vector
 C = [1, 0; 0, 1]; % State to output vector
 D = zeros(2,2); % Feed through vector (No disturbance for now)
 
-ss4 = ss(A,B,C,D);
-G = tf(ss4)              
-dcg = dcgain(G); 
-Tstall = K_M * (36/R);
+ss4 = ss(A,B,C,D); % M, U --> [omega, i]
+G = tf(ss4)        % [omega, i]
+dcg = dcgain(G);   
+Tstall = K_M * (36/R);     % stall torque
 Tend = 7;                  % seconds
 N    = 3000;
 offset = 500;
 t    = linspace(0, Tend, N+offset).';
 
-V_in   = 36 * ones(N+offset,1);                  % constant 36 V
+V_in   = 36 * ones(N+offset,1);    % constant 36 V
 tauL = linspace(0, Tstall, N).';   % N×1 column
 tauL = [zeros(offset,1); tauL];  
 Umat = [V_in, tauL]; 
@@ -139,6 +140,6 @@ ylabel('Angular Velocity [rad/sec]');
 title('Motor Angular Velocity Response');
 grid on;
 
-slope = (w_t(1500) - w_t(500)) / (tauL(1500) - tauL(500)); % Slope
+%slope = (w_t(1500) - w_t(500)) / (tauL(1500) - tauL(500)); % Slope
 Tstall*1000
-calculated_stall = K_M*i_t(end)*1000
+calculated_stall = K_M * i_t(end)*1000
