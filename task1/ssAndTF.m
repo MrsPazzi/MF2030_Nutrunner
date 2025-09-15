@@ -151,9 +151,11 @@ calculated_stall = K_M * i_t(end)*1000
 
 totalEfficiency = 1;    % [-] (eta_gs)
 maximumTorque = 55;     % [Nm] (T_max)
+minimumTorque = 10;     % [Nm] (T_min)
 
 torqueSection1 = Tstall;
 torqueSection2 = maximumTorque;
+%torqueSection2 = minimumTorque;
 
 gearRatioSection1 = torqueSection2 / (torqueSection1 * totalEfficiency)
 
