@@ -1,6 +1,7 @@
 clc, clear, close all;
 
 %% Symbolical representation (State-space and Transfer function)
+clc, clear, close all;
 syms R L K_E K_M J C_V s
 
 
@@ -15,6 +16,22 @@ I = eye(size(A));
 G = simplify(C * ((s*I - A)\B) + D); % Transfer function theta_dot(s)/u(s)
 pretty(G)
 
+
+%% Symbolical representation (State-space and Transfer function) Simplified
+clc, clear, close all;
+syms R L K_E K_M J C_V s
+
+
+A = -((K_M*K_E + (C_V*R))/(J*R)); % State matrix
+B = K_M/ (J * R); % Input to state vector
+C = 1; % State to output vector
+D = 0; % Feed through vector (No disturbance for now)
+
+
+
+I = eye(size(A));
+G = simplify(C * ((s*I - A)\B) + D); % Transfer function theta_dot(s)/u(s)
+pretty(G)
 
 %% Numeric representation (State-space and Transfer function) + step response (angular velocity) + tau
 clc, clear, close all;
@@ -42,13 +59,26 @@ while y(index) <= (0.632 * no_load_speed)
     index = index + 1;
 
 end
+pzmap(G)
+grid on
 
 tau % Calculated tau Task2
+
+% Simplified TF
+A = -((K_M*K_E + (C_V*R))/(J*R)); % State matrix
+B = K_M/ (J * R); % Input to state vector
+C = 1; % State to output vector
+D = 0; % Feed through vector (No disturbance for now)
+
+ss3 = ss(A,B,C,D); % Creates a state-space object
+G = tf(ss3)      
+pzmap(G)
+grid on
+
 
 %step(ss3, opt)                 % speed response to 36 V step
 %grid on
 %figure, bode(ss3), grid on  % frequency response
-
 
 %% Numeric representation (State-space and Transfer function) + step response (current)
 clc, clear, close all;
@@ -145,18 +175,19 @@ grid on;
 
 %Prints out stall torque calculated from data sheet and our calculated
 Tstall*1000
-calculated_stall = K_M * i_t(end)*1000
+calculated_stall = K_M * i_t(end)
 
 %% Calculated gear ratio (Task5)
-
+clc
+run 'motor_specs.m' 
 totalEfficiency = 1;    % [-] (eta_gs)
 maximumTorque = 55;     % [Nm] (T_max)
 minimumTorque = 10;     % [Nm] (T_min)
 
-torqueSection1 = Tstall;
+torqueSection1 = calculated_stall;
 torqueSection2 = maximumTorque;
 %torqueSection2 = minimumTorque;
 
-gearRatioSection1 = torqueSection2 / (torqueSection1 * totalEfficiency)
+totalGearRatio = torqueSection2 / (torqueSection1 * totalEfficiency)
 
-totalGearRatio = gearRatioSection1 * gearRatioSection1
+gearRatioSection1 = sqrt(totalGearRatio)

@@ -17,7 +17,7 @@ B = [(1/L), 0]';                          % Input to state vector
 C = [0, 1];                               % State to output vector
 D = 0;                                    % Feed through vector (No disturbance for now)
 
-As = -((K_MK_E + (bR))/(JR)); % State matrix simplified
+As = -((K_M*K_E + (b*R))/(J*R)); % State matrix simplified
 Bs = K_M/ (J*R); % Input to state vector
 Cs = 1; % State to output vector
 Ds = 0; % Feed through vector (No disturbance for now)
