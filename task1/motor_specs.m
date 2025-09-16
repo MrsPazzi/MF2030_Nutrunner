@@ -1,4 +1,6 @@
 % 036BX4 motor specs
+
+
 rpm_to_rs =  2 * pi / 60;
 rs_to_rpm = 60 / (2 * pi);
 U_N = 36;
@@ -14,3 +16,8 @@ A = [(-R/L), (-K_E/L); K_M/J, (-b/J)];  % State matrix
 B = [(1/L), 0]';                          % Input to state vector
 C = [0, 1];                               % State to output vector
 D = 0;                                    % Feed through vector (No disturbance for now)
+
+As = -((K_MK_E + (bR))/(JR)); % State matrix simplified
+Bs = K_M/ (J*R); % Input to state vector
+Cs = 1; % State to output vector
+Ds = 0; % Feed through vector (No disturbance for now)
