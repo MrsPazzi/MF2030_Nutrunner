@@ -1,6 +1,5 @@
 % 036BX4 motor specs
 
-
 rpm_to_rs =  2 * pi / 60;
 rs_to_rpm = 60 / (2 * pi);
 U_N = 36;
@@ -21,3 +20,23 @@ As = -((K_M*K_E + (b*R))/(J*R)); % State matrix simplified
 Bs = K_M/ (J*R); % Input to state vector
 Cs = 1; % State to output vector
 Ds = 0; % Feed through vector (No disturbance for now)
+
+
+% Technical specifications cordless nutrunner
+
+maximumTorque = 55;     % [Nm] (T_max)
+minimumTorque = 10;     % [Nm] (T_min)
+
+% Damping
+
+d_t = 1.5; % [Nm*s/rad]
+d_j = 1.5; % [Nm*s/rad]
+
+% Inertias
+
+J_g1 = 6.5E-8; % [kgm^2]
+J_g2 = 5.3E-8; % [kgm^2]
+
+% Material
+
+densitySteel = 7580; % [kg/m^3]

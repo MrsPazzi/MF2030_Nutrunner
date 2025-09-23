@@ -178,16 +178,55 @@ Tstall*1000
 calculated_stall = K_M * i_t(end)
 
 %% Calculated gear ratio (Task5)
+
 clc
 run 'motor_specs.m' 
+
 totalEfficiency = 1;    % [-] (eta_gs)
-maximumTorque = 55;     % [Nm] (T_max)
-minimumTorque = 10;     % [Nm] (T_min)
 
 torqueSection1 = calculated_stall;
 torqueSection2 = maximumTorque;
 %torqueSection2 = minimumTorque;
 
-totalGearRatio = torqueSection2 / (torqueSection1 * totalEfficiency)
+totalGearRatio = torqueSection2 / (torqueSection1 * totalEfficiency) % n
 
-gearRatioSection1 = sqrt(totalGearRatio)
+gearRatioSection1 = sqrt(totalGearRatio) % n_s1
+
+%% Task6
+
+clc
+run 'motor_specs.m' 
+
+% Angle gear
+
+radiusHorisontalAngle = ([10, 11, 14, 19.6] ./ 2) .* 1E-3; % [m]
+radiusVerticalAngle = ([27.7, 9.55] ./ 2) .* 1E-3; % [m]
+
+volumeHorisontalAngle = [(24.5 * (((10/2)^2)*pi)) , (19.6 * (((11/2)^2)*pi)) , (13.9 * (((14/2)^2)*pi)) , (13.1 * (((19.6/2)^2)*pi))] .* 1E-9; % [m]
+volumeVerticalAngle = [(7.042 * (((27.7/2)^2)*pi)) , ((27.7 - 7.042) * (((9.55/2)^2)*pi))] .* 1E-9; % [m]
+
+m_horisontalAngle = densitySteel .* volumeHorisontalAngle; % [kg]
+m_verticalAngle = densitySteel .* volumeVerticalAngle;     % [kg]
+
+J_horisontalAngle = (1/2) .* (m_horisontalAngle .* (radiusHorisontalAngle.^2));
+J_verticalAngle = (1/2) .* (m_verticalAngle .* (radiusVerticalAngle.^2));
+
+J_angle = sum(J_horisontalAngle) + sum(J_verticalAngle);
+
+% Gear inertia
+
+J_gear = J_gs2 + (J_gs1 / totalGearRatio);
+
+% Matrixes
+
+dampingMatrix = [d_t 0; 0 d_j];
+inertiaMatrix = [(J + J_angle + sum(J_horisontalAngle)) 0; 0 J_verticalAngle];
+
+% Symbolic values
+
+syms phi_dotdot1 phi_dotdot2 phi_dot1 phi_dot2 phi1 phi2 k1 k2
+
+stiffnessMatrix = [k1 0; k2 0];
+angularAcceleration = [phi_dotdot1, phi_dotdot2];
+angularVelocity = [phi_dot1, phi_dot2];
+angles = [phi1, phi2];
