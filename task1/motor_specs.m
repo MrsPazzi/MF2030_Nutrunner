@@ -32,10 +32,14 @@ minimumTorque = 10;     % [Nm] (T_min)
 d_t = 1.5; % [Nm*s/rad]
 d_j = 1.5; % [Nm*s/rad]
 
+% Stiffness
+
+k_t = 739; % [Nm/rad]
+
 % Inertias
 
-J_g1 = 6.5E-8; % [kgm^2]
-J_g2 = 5.3E-8; % [kgm^2]
+J_gs1 = 6.5E-8; % [kgm^2]
+J_gs2 = 5.3E-8; % [kgm^2]
 
 % Material
 

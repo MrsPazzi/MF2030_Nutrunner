@@ -203,30 +203,53 @@ radiusHorisontalAngle = ([10, 11, 14, 19.6] ./ 2) .* 1E-3; % [m]
 radiusVerticalAngle = ([27.7, 9.55] ./ 2) .* 1E-3; % [m]
 
 volumeHorisontalAngle = [(24.5 * (((10/2)^2)*pi)) , (19.6 * (((11/2)^2)*pi)) , (13.9 * (((14/2)^2)*pi)) , (13.1 * (((19.6/2)^2)*pi))] .* 1E-9; % [m]
-volumeVerticalAngle = [(7.042 * (((27.7/2)^2)*pi)) , ((27.7 - 7.042) * (((9.55/2)^2)*pi))] .* 1E-9; % [m]
-
+volumeVerticalAngle = [(7.042 * (((27.7/2)^2)*pi)) , ((9.55^2) + (9.55^2))] .* 1E-9; % [m]
 m_horisontalAngle = densitySteel .* volumeHorisontalAngle; % [kg]
 m_verticalAngle = densitySteel .* volumeVerticalAngle;     % [kg]
 
-J_horisontalAngle = (1/2) .* (m_horisontalAngle .* (radiusHorisontalAngle.^2));
-J_verticalAngle = (1/2) .* (m_verticalAngle .* (radiusVerticalAngle.^2));
+J_horisontalAngle = (1/2) .* (m_horisontalAngle .* (radiusHorisontalAngle.^2));     % [kgm^2]
+J_verticalAngle = [(1/2), (1/12)] .* (m_verticalAngle .* (radiusVerticalAngle.^2)); % [kgm^2]
 
-J_angle = sum(J_horisontalAngle) + sum(J_verticalAngle);
+J_angle = sum(J_horisontalAngle) + sum(J_verticalAngle); % [kgm^2]
 
 % Gear inertia
 
-J_gear = J_gs2 + (J_gs1 / totalGearRatio);
+J_gear = J_gs2 + (J_gs1 / totalGearRatio); % [kgm^2]
 
 % Matrixes
 
-dampingMatrix = [d_t 0; 0 d_j];
-inertiaMatrix = [(J + J_angle + sum(J_horisontalAngle)) 0; 0 J_verticalAngle];
+d1 = d_j; % [Nm*s/rad]
+d2 = d_t; % [Nm*s/rad]
+d3 = b; % [Nm*s/rad] motor damping
+
+dampingMatrix = [(d1 + d2) -d2; d2 (d2 + d3)]; % [Nm*s/rad]
+inertiaMatrix = [J_angle 0; 0 J_gear + J]; % [kgm^2]
+
+% Stiffness matrix
+
+k1 = 0;   % [Nm/rad] k_j assumed 0 (no screw stiffness)
+k2 = k_t; % [Nm/rad]
+k3 = 0;   % [Nm/rad] Rigid motor axis 
+
+stiffnessMatrix = [(k1 + k2) -k2; -k2 (k2 + k3)]; % [Nm/rad]
+
+% State space model
+
+E = eye(2);
+A6 = [zeros(2) E; ((-inv(inertiaMatrix)) * stiffnessMatrix), ((-inv(inertiaMatrix)) * dampingMatrix)];
+B6 = [zeros(2) inv(inertiaMatrix)]'
+C6 = [0 1 0 0]
+%C6 = [1 0 0 0; 0 1 0 0; 0 0 0 0; 0 0 0 0]
+D6 = [0 0] %zeros(1,4)
+
+stateSpaceFouthOrder = ss(A6,B6,C6,D6)
+
+%D6 = zeros(4)
 
 % Symbolic values
 
-syms phi_dotdot1 phi_dotdot2 phi_dot1 phi_dot2 phi1 phi2 k1 k2
+syms phi_dotdot1 phi_dotdot2 phi_dot1 phi_dot2 phi1 phi2
 
-stiffnessMatrix = [k1 0; k2 0];
 angularAcceleration = [phi_dotdot1, phi_dotdot2];
 angularVelocity = [phi_dot1, phi_dot2];
 angles = [phi1, phi2];
