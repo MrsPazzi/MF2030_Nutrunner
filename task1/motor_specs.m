@@ -35,6 +35,7 @@ d_j = 1.5; % [Nm*s/rad]
 % Stiffness
 
 k_t = 739; % [Nm/rad]
+%k_j
 
 % Inertias
 
