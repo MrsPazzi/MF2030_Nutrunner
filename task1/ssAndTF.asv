@@ -216,6 +216,13 @@ J_angle = sum(J_horisontalAngle) + sum(J_verticalAngle); % [kgm^2]
 
 J_gear = J_gs2 + (J_gs1 / totalGearRatio); % [kgm^2]
 
+% Middle axis inertia
+
+radiusSquaredMiddleAxis = [(5.9/2)^2 , ((9/2)^2 + (11/2)^2)] .* 1E-6;
+volumeMiddleAxis = [((5.9/2)^2 * (40.3 - 16.2)), (((11/2)^2 * 16.2) - ((9/2)^2 * 14))] .* 1E-9;
+m_middleAxis = densitySteel .* volumeMiddleAxis;
+J_middleAxis = sum(((1/2) * m_middleAxis) .* radiusSquaredMiddleAxis);
+
 % Matrixes
 
 d1 = d_j; % [Nm*s/rad]
@@ -242,10 +249,14 @@ stiffnessMatrix = [(k1 + k2) -k2; -k2 (k2 + k3)]; % [Nm/rad]
 % %C6 = [1 0 0 0; 0 1 0 0; 0 0 0 0; 0 0 0 0]
 % D6 = [0 0] %zeros(1,4)
 
+J_T = J_angle;
+n = totalGearRatio;
+J_gm = J_gear + J;
+
 A6 = [ 0, 0, 1, 0;
       0, 0, 0, 1;
-     -k_t/(J_gmn^2), k_t/(J_gmn), ( -K_EK_M/R - b_m - d_t/n^2 )/J_gm, d_t/(J_gmn);
-      k_t/(J_Tn), -k_t/J_T, -d_t/(J_Tn), -(d_t+d_j)/J_T ];
+     -k_t/(J_gm*n^2), k_t/(J_gm*n), (((-K_E*K_M)/R) - b - (d_t/(n^2)))/J_gm, d_t/(J_gm*n);
+      k_t/(J_T*n), -k_t/J_T, -d_t/(J_T*n), -(d_t+d_j)/J_T ];
 
 B6 = [ 0, 0;
       0, 0;
@@ -257,6 +268,8 @@ C6 = eye(4);
 D6 = zeros(4,2);
 
 stateSpaceFouthOrder = ss(A6,B6,C6,D6)
+
+t6TransferFunction = tf(stateSpaceFouthOrder)
 
 % Symbolic values
 
