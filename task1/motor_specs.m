@@ -45,3 +45,10 @@ J_gs2 = 5.3E-8; % [kgm^2]
 % Material
 
 densitySteel = 7580; % [kg/m^3]
+
+% M8 screw
+
+A_M8 = 3.66E-5;
+E_steel = 210E9;
+L_free = 0.1;
+L_p = 1.25E-3;

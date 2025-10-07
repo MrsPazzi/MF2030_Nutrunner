@@ -249,9 +249,9 @@ stiffnessMatrix = [(k1 + k2) -k2; -k2 (k2 + k3)]; % [Nm/rad]
 % %C6 = [1 0 0 0; 0 1 0 0; 0 0 0 0; 0 0 0 0]
 % D6 = [0 0] %zeros(1,4)
 
-J_T = J_angle;
-n = totalGearRatio;
-J_gm = J_gear + J;
+J_T = J_angle
+n = totalGearRatio
+J_gm = J_gear + J + J_middleAxis
 
 A6 = [ 0, 0, 1, 0;
       0, 0, 0, 1;
@@ -275,3 +275,17 @@ syms phi_dotdot1 phi_dotdot2 phi_dot1 phi_dot2 phi1 phi2
 angularAcceleration = [phi_dotdot1, phi_dotdot2];
 angularVelocity = [phi_dot1, phi_dot2];
 angles = [phi1, phi2];
+
+%% Task 8
+
+clc
+run 'motor_specs.m' 
+
+k_j = (A_M8*E_steel) / L_free;
+
+k_theta = k_j * (L_p / (2 * pi))^2
+
+A8 = [ 0, 0, 1, 0;
+      0, 0, 0, 1;
+     -k_t/(J_gm*n^2), k_t/(J_gm*n), (((-K_E*K_M)/R) - b - (d_t/(n^2)))/J_gm, d_t/(J_gm*n);
+      k_t/(J_T*n), -(k_t + k_theta)/J_T, -d_t/(J_T*n), -(d_t+d_j)/J_T ]
