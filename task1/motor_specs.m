@@ -55,3 +55,7 @@ L_p = 1.25E-3;
 
 %Task 9
 T_thresh = 25;
+
+%Task 10
+sigma_s = 640E6;
+my = 0.2;
