@@ -52,3 +52,6 @@ A_M8 = 3.66E-5;
 E_steel = 210E9;
 L_free = 0.1;
 L_p = 1.25E-3;
+
+%Task 9
+T_thresh = 25;
