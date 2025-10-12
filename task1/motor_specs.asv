@@ -1,4 +1,5 @@
 % 036BX4 motor specs
+
 rpm_to_rs =  2 * pi / 60;
 rs_to_rpm = 60 / (2 * pi);
 U_N = 36;
@@ -6,11 +7,56 @@ I0 = 0.124;
 J = 6.3E-6;
 R = 3.23;
 K_M = 0.0644;
-K_E = 0.006741* /rpm_to_rs;
+K_E = 0.006741/rpm_to_rs;
 C_V = 1.1E-6;
 L = 0.000238;
-b = C_V * rs_to_rpm;
+b = C_V / rpm_to_rs;
 A = [(-R/L), (-K_E/L); K_M/J, (-b/J)];  % State matrix
 B = [(1/L), 0]';                          % Input to state vector
 C = [0, 1];                               % State to output vector
 D = 0;                                    % Feed through vector (No disturbance for now)
+
+As = -((K_M*K_E + (b*R))/(J*R)); % State matrix simplified
+Bs = K_M/ (J*R); % Input to state vector
+Cs = 1; % State to output vector
+Ds = 0; % Feed through vector (No disturbance for now)
+
+
+% Technical specifications cordless nutrunner
+
+maximumTorque = 55;     % [Nm] (T_max)
+minimumTorque = 10;     % [Nm] (T_min)
+
+% Damping
+
+d_t = 1.5; % [Nm*s/rad]
+d_j = 1.5; % [Nm*s/rad]
+
+% Stiffness
+
+k_t = 739; % [Nm/rad]
+%k_j
+
+% Inertias
+
+J_gs1 = 6.5E-8; % [kgm^2]
+J_gs2 = 5.3E-8; % [kgm^2]
+
+% Material
+
+densitySteel = 7580; % [kg/m^3]
+
+% M8 screw
+
+A_M8 = 3.66E-5;
+E_steel = 210E9;
+L_free = 0.1;
+L_p = 1.25E-3;
+
+%Task 9
+T_thresh = 25;
+
+%Task 10
+delta_ratio = L_p/(2*pi);
+sigma_s = 640E6;
+my = 0.2;

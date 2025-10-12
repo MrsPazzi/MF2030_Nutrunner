@@ -57,5 +57,10 @@ L_p = 1.25E-3;
 T_thresh = 25;
 
 %Task 10
+delta_ratio = L_p/(2*pi);
 sigma_s = 640E6;
+r_s = 3.594E-3;
 my = 0.2;
+T_thresh_1 = 22;
+T_thresh_2 = 20;
+T_thresh_3 = 15;
